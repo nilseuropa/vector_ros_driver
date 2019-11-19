@@ -12,6 +12,7 @@ from vector_ros_driver.drive import Drive
 from vector_ros_driver.camera import Camera
 from vector_ros_driver.behavior import Behavior
 from vector_ros_driver.tf import JointStatesPublisher
+from vector_ros_driver.imu import Imu
 
 if __name__=="__main__":
     rospy.init_node("vector")
@@ -35,6 +36,10 @@ if __name__=="__main__":
     Behavior(async_robot)
 
     # these services require threads to run(and publish) in parallel
+
+    imu_thread = threading.Thread(target=Imu, args=(async_robot,))
+    imu_thread.start()
+
     drive_thread = threading.Thread(target=Drive, args=(async_robot,))
     drive_thread.start()
 
