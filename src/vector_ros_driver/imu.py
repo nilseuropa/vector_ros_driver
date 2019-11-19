@@ -17,8 +17,8 @@ class Imu(object):
     def publish_inertial_vectors(self):
 
         while not rospy.is_shutdown():
-            gyroscope = Vector3(self.async_robot.gyro)
-            accelerometer = Vector3(self.async_robot.accel)
+            gyroscope = Vector3(self.async_robot.gyro.x,self.async_robot.gyro.y,self.async_robot.gyro.z)
+            accelerometer = Vector3(self.async_robot.accel.x,self.async_robot.accel.y,self.async_robot.accel.z)
             self.gyro_publisher.publish(gyroscope)
             self.accelero_publisher.publish(accelerometer)
 
