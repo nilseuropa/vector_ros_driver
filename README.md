@@ -14,7 +14,7 @@ sudo apt-get install -y docker-ce
 
 2. Run using pre-built image from DockerHub, params are passed view environment variables:
 ```sh
-sudo docker run -e ANKI_USER_EMAIL=<EMAIL> -e ANKI_USER_PASSWORD=<PASSWORD> -e VECTOR_IP=<VECTOR_IP> -e VECTOR_SERIAL=<VECTOR_SERIAL> -e VECTOR_NAME=<VECTOR_NAME> --network host -it betab0t/vector-ros-driver
+sudo docker run -e ANKI_USER_EMAIL=<EMAIL> -e ANKI_USER_PASSWORD=<PASSWORD> -e VECTOR_IP=<VECTOR_IP> -e VECTOR_SERIAL=<VECTOR_SERIAL> -e VECTOR_NAME=<VECTOR_NAME> --network host -it nilseuropa/vector-ros-driver
 ```
 *Notice! Use your [Anki Developer](https://developer.anki.com/) username and password*
 
