@@ -1,5 +1,5 @@
 <launch>
-    <arg name="model" default="$(find vector_ros_driver)/urdf/vector.urdf.xacro" />
+    <arg name="model" default="$(find anki_description)/urdf/vector.xacro" />
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
 
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
@@ -39,7 +39,7 @@
         </rosparam>
     </node>
 
-    <node name="diff_drive_go_to_goal" pkg="diff_drive" type="diff_drive_go_to_goal" output="screen">
+    <!--node name="diff_drive_go_to_goal" pkg="diff_drive" type="diff_drive_go_to_goal" output="screen">
         <param name="~rate" value="20" />
         <param name="~kP" value="0.5" />
         <param name="~kA" value="1.0" />
@@ -52,5 +52,5 @@
         <param name="~angular_tolerance" value="0.04" />
         <param name="~forwardMovementOnly" value="false" />
         <remap from="cmd_vel" to="/vector/cmd_vel" />
-    </node>
+    </node-->
 </launch>
