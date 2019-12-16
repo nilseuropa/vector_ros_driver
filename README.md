@@ -29,6 +29,8 @@ sudo docker run -e ANKI_USER_EMAIL=<EMAIL> -e ANKI_USER_PASSWORD=<PASSWORD> -e V
 
 * `/vector/accelero` *(geometry_msgs/Vector3)*
 
+* `/vector/laser` *(sensor_msgs/Range)*
+
 # Services
 
 * `/vector/battery_state`
@@ -57,3 +59,4 @@ Your Vector IP address looks like “192.168.40.134”. Find the IP address from
 
 # Changelog
 * IMU wrapper added
+* TOF Laser publisher added
