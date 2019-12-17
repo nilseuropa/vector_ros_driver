@@ -1,29 +1,67 @@
 # vector_ros_driver
-This repository contains a ROS package to control physical Anki Vector home robot. For more information please visit [beta_b0t/vector_ros](https://github.com/betab0t/vector_ros) main repository. In [nilseuropa/vector_description](https://github.com/nilseuropa/vector_description) you can find a detailed URDF model prepared for Gazebo simulation. ( These two repositories are going to be merged soon. )
+This package contains ROS python wrappers to exploit the features of Anki Vector SDK interfacing the physical robot.
+In [nilseuropa/vector_description](https://github.com/nilseuropa/vector_description) you can find a detailed URDF model prepared for Gazebo simulation.
 
-# Setup
-## Docker Image
-It's highly recommended to use the supplied Dockerfile instead of installing directly on your machine mainly because of the tricky setup required to run Python 3 properly on ROS. If you wish to do this setup by yourself then [beta_b0t wrote a blog post explaining how](https://medium.com/@beta_b0t/how-to-setup-ros-with-python-3-44a69ca36674) that you can use, else follow these instructions:
-1. Install [Docker](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04) if you dont have it already installed
-```sh
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-sudo apt-get update
-sudo apt-get install -y docker-ce
+![](doc/rviz.png)
+
+## Setup
+
+### Install required dependencies
+
+`apt-get install` the following packages:
+* python3-yaml
+* python3-pip
+* python3-dev
+* python3-numpy
+* python-catkin-tools
+* python3-catkin-pkg-modules
+* libopencv-dev
+
+```bash
+sudo apt install python3-yaml python3-pip python3-dev python3-numpy python-catkin-tools python3-catkin-pkg-modules libopencv-dev
 ```
 
-2. Run using pre-built image from DockerHub, params are passed view environment variables:
-```sh
-sudo docker run -e ANKI_USER_EMAIL=<EMAIL> -e ANKI_USER_PASSWORD=<PASSWORD> -e VECTOR_IP=<VECTOR_IP> -e VECTOR_SERIAL=<VECTOR_SERIAL> -e VECTOR_NAME=<VECTOR_NAME> --network host -it nilseuropa/vector-ros-driver
+`pip3 install` these:
+* opencv-python
+* rospkg
+* catkin_pkg
+
+**SDK Setup**
+
+Get the Vector SDK if you don't have it already with `python3 -m pip install --user anki_vector`.
+Run the `sdk_auto_config.sh` script to save the Anki SDK certification file to your disk. _( Make a backup of those files, as Anki cloud services might go down soon. )_
+
+### Build **cv_bridge** for python 3.6
+```bash
+mkdir rospy3_cv_bridge_ws
+cd /rospy3_cv_bridge_ws
+catkin init
+catkin config -DPYTHON_EXECUTABLE=/usr/bin/python3.6 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so
+catkin config --install
+git clone https://github.com/ros-perception/vision_opencv.git src/vision_opencv
+cd src/vision_opencv/
+git checkout melodic
+cd ../../
+catkin build cv_bridge
 ```
-*Notice! Use your [Anki Developer](https://developer.anki.com/) username and password*
+Best to add `source ~/rospy3_cv_bridge_ws/install/setup.bash --extend` to your `.bashrc`
 
-3. You can now execute ```rostopic list``` on your host machine the verify everything works
+### Build this package
+Clone this repository into your regular ROS catkin workspace and run `roslaunch vector_ros_driver driver.launch`
 
-# Topics
+_It shall produce this graph:_
+![](doc/rosgraph.png)
+
+## Topics
 * `/vector/camera`  *(sensor_msgs/Image)*
 
-* `/vector/cmd_vel` *(geometry_msgs/Twist)*
+* `/vector/left_wheel_ticks` *(std_msgs/Int32)*
+
+* `/vector/right_wheel_ticks` *(std_msgs/Int32)*
+
+* `/vector/left_wheel_desired_rate` *(std_msgs/Int32)*
+
+* `/vector/right_wheel_desired_rate` *(std_msgs/Int32)*
 
 * `/vector/gyro` *(geometry_msgs/Vector3)*
 
@@ -31,7 +69,7 @@ sudo docker run -e ANKI_USER_EMAIL=<EMAIL> -e ANKI_USER_PASSWORD=<PASSWORD> -e V
 
 * `/vector/laser` *(sensor_msgs/Range)*
 
-# Services
+## Services
 
 * `/vector/battery_state`
 
@@ -43,11 +81,11 @@ sudo docker run -e ANKI_USER_EMAIL=<EMAIL> -e ANKI_USER_PASSWORD=<PASSWORD> -e V
 
 * `/vector/say_text`
 
-# Actions
+## Actions
 
-* `/vector/play_animation` - Play animation by name.
+* `/vector/play_animation`
 
-# FAQ
+## FAQ
 #### Can’t find robot name
 Your Vector robot name looks like “Vector-E5S6”. Find your robot name by placing Vector on the charger and double-clicking Vector’s backpack button.
 
@@ -57,6 +95,5 @@ Your Vector’s serial number looks like “00e20142”. Find your robot serial 
 #### Can’t find Vector’s IP address
 Your Vector IP address looks like “192.168.40.134”. Find the IP address from Vector’s debug screen: double-click his backpack, move his arms up and down, then look for “IP” on his screen.
 
-# Changelog
-* IMU wrapper added
-* TOF Laser publisher added
+## Credits
+Most content of this repository has been originally created by [betab0t](https://github.com/betab0t).

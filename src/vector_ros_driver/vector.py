@@ -34,7 +34,7 @@ class Vector(object):
         return response
 
     def say_text_cb(self, request):
-        self.robot.say_text(request.text)
+        self.robot.behavior.say_text(request.text)
 
         return SayTextResponse()
 

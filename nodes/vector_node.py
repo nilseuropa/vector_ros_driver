@@ -26,7 +26,7 @@ if __name__=="__main__":
         async_robot = mock_robot.MockRobot()
 
     else:
-        async_robot = anki_vector.AsyncRobot(enable_camera_feed=True)
+        async_robot = anki_vector.AsyncRobot() #AsyncRobot(enable_camera_feed=True)
 
     # connect to Vector
     async_robot.connect()
@@ -47,8 +47,8 @@ if __name__=="__main__":
     drive_thread = threading.Thread(target=Drive, args=(async_robot,))
     drive_thread.start()
 
-    camera_thread = threading.Thread(target=Camera, args=(async_robot,))
-    camera_thread.start()
+    #camera_thread = threading.Thread(target=Camera, args=(async_robot,))
+    #camera_thread.start()
 
     tf_thread = threading.Thread(target=JointStatesPublisher, args=(async_robot,))
     tf_thread.start()
