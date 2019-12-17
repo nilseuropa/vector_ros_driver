@@ -8,7 +8,7 @@ import numpy
 from sensor_msgs.msg import Image
 
 class Camera(object):
-    def __init__(self, async_robot, publish_rate=10):
+    def __init__(self, async_robot, publish_rate=25):
         self.async_robot = async_robot
         self.rate = rospy.Rate(publish_rate)
         self.image_publisher = rospy.Publisher("~camera", Image, queue_size=1)
@@ -30,4 +30,3 @@ if __name__=="__main__":
     async_robot.connect()
     Camera(async_robot)
     rospy.spin()
-

@@ -7,7 +7,7 @@ from std_msgs.msg import Int32
 
 
 class Drive(object):
-    def __init__(self, async_robot, publish_rate=2):
+    def __init__(self, async_robot, publish_rate=50):
         self.async_robot = async_robot
         self.publish_rate = publish_rate
         self.rate = rospy.Rate(self.publish_rate)
