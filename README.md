@@ -1,75 +1,75 @@
-# vector_ros
-This repository contains an *unofficial* ROS package for [Anki Vector](https://www.anki.com/en-us/vector) that I started as a small side project after finishing several online ROS courses. This package is essentially a wrapping of core Vector functions from [Vector Python SDK](https://github.com/anki/vector-python-sdk) as ROS topics, services and actions(full list below). In order to showcase the package I wrote a simple [red ball tracking node](https://github.com/betab0t/vector_ros/blob/develop/nodes/simple_ball_tracker_node.py) which subscribes to the camera feed coming from Vector, locates the red ball using cv_bridge/OpenCV and publish Twist messages to move the robot accurdenly as you can see in the following video:
+# vector_ros_driver
+This package contains ROS python wrappers to exploit the features of Anki Vector SDK interfacing the physical robot.
+In [nilseuropa/vector_description](https://github.com/nilseuropa/vector_description) you can find a detailed URDF model prepared for Gazebo simulation.
 
-<p align="center">
-  <a target="_blank" href="http://www.youtube.com/watch?v=XxaOyA-M3U4">
-    <img src="http://img.youtube.com/vi/XxaOyA-M3U4/0.jpg">
-  </a>
-</p>
+![](doc/rviz.png)
 
-# Setup
-## Requirements(non Docker setup)
-- ROS Melodic with Python 3.6 installed
-- [Vector Python SDK](https://github.com/anki/vector-python-sdk)
-- [diff_drive](https://github.com/merose/diff_drive) package
+## Setup
 
-## Docker Image
-It's highly recommended to use the supplied Dockerfile insted of installing directly on your machine mainly because of the tricky setup required to run Python 3 properly on ROS. follow the instructions:
-1. Install [Docker](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04) and [docker-compose](https://docs.docker.com/compose/install/) if you dont have it already installed
-```sh
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-sudo apt-get update
-sudo apt-get install -y docker-ce
-sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+### Install required dependencies
+
+`apt-get install` the following packages:
+* python3-yaml
+* python3-pip
+* python3-dev
+* python3-numpy
+* python-catkin-tools
+* python3-catkin-pkg-modules
+* libopencv-dev
+
+```bash
+sudo apt install python3-yaml python3-pip python3-dev python3-numpy python-catkin-tools python3-catkin-pkg-modules libopencv-dev
 ```
 
-2. Clone this repository and create docker-compose file from template
-```sh
-git clone https://github.com/betab0t/vector_ros
-cd vector_ros
-cp docker-compose-TEMPLATE.yml docker-compose.yml
-nano docker-compose.yml
-```
+`pip3 install` these:
+* opencv-python
+* rospkg
+* catkin_pkg
 
-3. Edit the following lines and save
-```yaml
-vector_ip: <VECTOR_IP>
-vector_name: <VECTOR_NAME>
-vector_serial: <VECTOR_SERIAL> 
-```
-*Not sure how to get this info? see FAQ section below*
+**SDK Setup**
 
-4. Build and start the container
-```sh
-sudo docker-compose build --build-arg anki_user_email=<ANKI_ACCOUNT_EMAIL> --build-arg anki_user_password=<ANKI_ACCOUNT_PASSWORD>
-sudo docker-compose up
-```
-*Use your [Anki Developer](https://developer.anki.com/) username and password*
+Get the Vector SDK if you don't have it already with `python3 -m pip install --user anki_vector`.
+Run the `sdk_auto_config.sh` script to save the Anki SDK certification file to your disk. _( Make a backup of those files, as Anki cloud services might go down soon. )_
 
-# Topics
+### Build **cv_bridge** for python 3.6
+```bash
+mkdir rospy3_cv_bridge_ws
+cd /rospy3_cv_bridge_ws
+catkin init
+catkin config -DPYTHON_EXECUTABLE=/usr/bin/python3.6 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so
+catkin config --install
+git clone https://github.com/ros-perception/vision_opencv.git src/vision_opencv
+cd src/vision_opencv/
+git checkout melodic
+cd ../../
+catkin build cv_bridge
+```
+Best to add `source ~/rospy3_cv_bridge_ws/install/setup.bash --extend` to your `.bashrc`
+
+### Build this package
+Clone this repository into your regular ROS catkin workspace and run `roslaunch vector_ros_driver driver.launch`
+
+_It shall produce this graph:_
+![](doc/rosgraph.png)
+
+## Topics
 * `/vector/camera`  *(sensor_msgs/Image)*
 
-Vector camera feed.
+* `/vector/left_wheel_ticks` *(std_msgs/Int32)*
 
-* `/lwheel_ticks` *(std_msgs/Int32)*
+* `/vector/right_wheel_ticks` *(std_msgs/Int32)*
 
-Cumulative encoder ticks of the left wheel. used by [diff_drive](https://github.com/merose/diff_drive) package.
+* `/vector/left_wheel_desired_rate` *(std_msgs/Int32)*
 
-* `/rwheel_ticks`  *(std_msgs/Int32)*
+* `/vector/right_wheel_desired_rate` *(std_msgs/Int32)*
 
-Cumulative encoder ticks of the right wheel. used by [diff_drive](https://github.com/merose/diff_drive) package.
+* `/vector/gyro` *(geometry_msgs/Vector3)*
 
-* `/lwheel_rate`  *(std_msgs/Int32)*
+* `/vector/accelero` *(geometry_msgs/Vector3)*
 
-Left wheel rotation rate. used by [diff_drive](https://github.com/merose/diff_drive) package.
+* `/vector/laser` *(sensor_msgs/Range)*
 
-* `/rwheel_rate`  *(std_msgs/Int32)*
-
-Right wheel rotation rate. used by [diff_drive](https://github.com/merose/diff_drive) package.
-
-# Services
+## Services
 
 * `/vector/battery_state`
 
@@ -81,57 +81,19 @@ Right wheel rotation rate. used by [diff_drive](https://github.com/merose/diff_d
 
 * `/vector/say_text`
 
-# Actions
+## Actions
 
 * `/vector/play_animation`
 
-Play animation by name.
+## FAQ
+#### Can’t find robot name
+Your Vector robot name looks like “Vector-E5S6”. Find your robot name by placing Vector on the charger and double-clicking Vector’s backpack button.
 
-# Examples
-## View single image from camera
-```sh
-beta_b0t@home:~$ rosrun image_view image_saver image:=/vector/camera
-[ INFO] [1550425113.646567813]: Saved image left0000.jpg
-[ INFO] [1550425113.752592532]: Saved image left0001.jpg
-[ INFO] [1550425113.848999553]: Saved image left0002.jpg
-...
-(Ctrl+C)
-...
-beta_b0t@home:~$ eog left0000.jpg
-```
+#### Can’t find serial number
+Your Vector’s serial number looks like “00e20142”. Find your robot serial number on the underside of Vector. Or, find the serial number from Vector’s debug screen: double-click his backpack, move his arms up and down, then look for “ESN” on his screen.
 
-## Set head angle
-```sh
-beta_b0t@home:~$ rosservice call /vector/set_head_angle "deg: 45.0"
-```
+#### Can’t find Vector’s IP address
+Your Vector IP address looks like “192.168.40.134”. Find the IP address from Vector’s debug screen: double-click his backpack, move his arms up and down, then look for “IP” on his screen.
 
-## Say text
-```sh
-beta_b0t@home:~$ rosservice call /vector/say_text "text: 'hello world'"
-```
-
-## Play animation 
-```sh
-beta_b0t@home:~$ rostopic pub /vector/play_animation/goal vector_ros/PlayAnimationActionGoal "header:
-  seq: 0
-  stamp:
-    secs: 0
-    nsecs: 0
-  frame_id: ''
-goal_id:
-  stamp:
-    secs: 0
-    nsecs: 0
-  id: ''
-goal:
-  anim: 'anim_turn_left_01'"
-```
-
-# FAQ
-- **[How do i find Vector's IP address?](https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-vector-s-ip-address)**
-
-- **[How do i find Vector's name?](https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-robot-name)**
-
-- **[How do i find Vector's serial number?](https://developer.anki.com/vector/docs/troubleshooting.html#can-t-find-serial-number)**
-
-- **Why isn't this XX from Vector SDK supported?** Well, I didn't wrap all the functions from the SDK - only the main ones as i see it. Yet, if you found a missing function that you need/would like to see as part of vector_ros, please consider opening a [new issue](https://github.com/betab0t/vector_ros/issues/new) with your proposal.
+## Credits
+Most content of this repository has been originally created by [betab0t](https://github.com/betab0t).

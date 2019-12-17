@@ -7,18 +7,18 @@ from std_msgs.msg import Int32
 
 
 class Drive(object):
-    def __init__(self, async_robot, publish_rate=2):
+    def __init__(self, async_robot, publish_rate=50):
         self.async_robot = async_robot
         self.publish_rate = publish_rate
         self.rate = rospy.Rate(self.publish_rate)
 
         # publishers
-        self.lwheel_ticks_publisher = rospy.Publisher("~lwheel_ticks", Int32, queue_size=1)
-        self.rwheel_ticks_publisher = rospy.Publisher("~rwheel_ticks", Int32, queue_size=1)
+        self.lwheel_ticks_publisher = rospy.Publisher("~left_wheel_ticks", Int32, queue_size=1)
+        self.rwheel_ticks_publisher = rospy.Publisher("~right_wheel_ticks", Int32, queue_size=1)
 
         # subscribers
-        self.lwheel_desired_rate_subscriber = rospy.Subscriber("~lwheel_desired_rate", Int32, self.lwheel_desired_rate_cb)
-        self.rwheel_desired_rate_subscriber = rospy.Subscriber("~rwheel_desired_rate", Int32, self.rwheel_desired_rate_cb)
+        self.lwheel_desired_rate_subscriber = rospy.Subscriber("~left_wheel_desired_rate", Int32, self.lwheel_desired_rate_cb)
+        self.rwheel_desired_rate_subscriber = rospy.Subscriber("~right_wheel_desired_rate", Int32, self.rwheel_desired_rate_cb)
 
         # wheels speed
         self.lwheel_speed_mm_sec = 0

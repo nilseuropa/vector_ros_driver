@@ -4,8 +4,8 @@ import rospy
 import anki_vector
 import concurrent.futures
 
-from vector_ros.srv import BatteryState, BatteryStateResponse
-from vector_ros.srv import SayText, SayTextResponse
+from vector_ros_driver.srv import BatteryState, BatteryStateResponse
+from vector_ros_driver.srv import SayText, SayTextResponse
 
 class Vector(object):
     '''Expose functions list at https://developer.anki.com/vector/docs/generated/anki_vector.html'''
@@ -34,7 +34,7 @@ class Vector(object):
         return response
 
     def say_text_cb(self, request):
-        self.robot.say_text(request.text)
+        self.robot.behavior.say_text(request.text)
 
         return SayTextResponse()
 
