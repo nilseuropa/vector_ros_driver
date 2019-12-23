@@ -4,7 +4,7 @@ import rospy
 import anki_vector
 
 from std_msgs.msg import Int32
-
+from std_msgs.msg import Int32
 
 class Drive(object):
     def __init__(self, async_robot, publish_rate=50):
@@ -13,8 +13,8 @@ class Drive(object):
         self.rate = rospy.Rate(self.publish_rate)
 
         # publishers
-        self.lwheel_ticks_publisher = rospy.Publisher("~left_wheel_ticks", Int32, queue_size=1)
-        self.rwheel_ticks_publisher = rospy.Publisher("~right_wheel_ticks", Int32, queue_size=1)
+        self.lwheel_ticks_publisher = rospy.Publisher("~left_wheel_speed", Int32, queue_size=1)
+        self.rwheel_ticks_publisher = rospy.Publisher("~right_wheel_speed", Int32, queue_size=1)
 
         # subscribers
         self.lwheel_desired_rate_subscriber = rospy.Subscriber("~left_wheel_desired_rate", Int32, self.lwheel_desired_rate_cb)
@@ -42,15 +42,8 @@ class Drive(object):
         rwheel_ticks_total = 0
 
         while not rospy.is_shutdown():
-            if self.async_robot.left_wheel_speed_mmps > 0:
-                lwheel_ticks_total += self.async_robot.left_wheel_speed_mmps / self.publish_rate
-
-            if self.async_robot.right_wheel_speed_mmps > 0:
-                rwheel_ticks_total += self.async_robot.right_wheel_speed_mmps / self.publish_rate
-
-            # publish number of estimated ticks for each wheel in ratio of 1000 ticks per meter
-            self.lwheel_ticks_publisher.publish(data=int(lwheel_ticks_total))
-            self.rwheel_ticks_publisher.publish(data=int(rwheel_ticks_total))
+            self.lwheel_ticks_publisher.publish(int(self.async_robot.left_wheel_speed_mmps))
+            self.rwheel_ticks_publisher.publish(int(self.async_robot.right_wheel_speed_mmps))
 
             self.rate.sleep() # publish at specified rate
 
