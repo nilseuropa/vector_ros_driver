@@ -16,7 +16,10 @@
         <param name="rate" value="10.0"/>
     </node>
 
-    <node pkg="vector_ros_driver" type="vector_node.py" name="vector" output="screen">
+    <node pkg="vector_ros_driver" type="vector_node.py"  name="vector" output="screen"/>
+    <node pkg="vector_ros_driver" type="vector_drive.py" name="controller" output="screen"/>
+    <node pkg="vector_ros_driver" type="vector_odometry.py" name="odometry" output="screen">
+      <param name="publish_tf" value="true"/>
     </node>
 
 </launch>

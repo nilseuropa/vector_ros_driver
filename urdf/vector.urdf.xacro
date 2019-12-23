@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot name="Vector" xmlns:xacro="http://ros.org/wiki/xacro">
-  <!-- This URDF is based on Cozmo descriptor from The Construct ROSject(https://rds.theconstructsim.com/r/830420c6168e/cozmo_simulation_3__4dca/) -->
+
+  <link name="base_footprint"/>
   <link name="base_link"/>
   <link name="front_left_wheel"/>
   <link name="front_right_wheel"/>
@@ -13,6 +14,11 @@
   <link name="camera_link"/>
 
   <!--joints -->
+  <joint name="base_to_footprint" type="fixed">
+   <parent link="base_footprint"/>
+   <child link="base_link"/>
+   <origin xyz="0 0 0"/>
+ </joint>
 
    <joint name="base_to_lift" type="revolute">
     <parent link="base_link"/>

@@ -4,8 +4,12 @@ project(vector_ros_driver)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
+  geometry_msgs
   message_generation
+  actionlib
   actionlib_msgs
+  tf
+  tf2
 )
 
 catkin_python_setup()
@@ -26,17 +30,13 @@ add_action_files(
 
 generate_messages(
    DEPENDENCIES
-   actionlib_msgs std_msgs  # Or other packages containing msgs
+   actionlib_msgs std_msgs geometry_msgs
 )
 
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES vector_ros_driver
   CATKIN_DEPENDS rospy
-#  DEPENDS system_lib
 )
 
 include_directories(
-# include
   ${catkin_INCLUDE_DIRS}
 )
