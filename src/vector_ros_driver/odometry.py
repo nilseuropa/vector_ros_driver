@@ -1,49 +1,41 @@
 from __future__ import division
 from math import pi, sin, cos
-from vector_ros_driver.encoder import Encoder
 from vector_ros_driver.pose import Pose
 
 class Odometry:
-    """Keeps track of the current position and velocity of a
-    robot using differential drive.
-    """
 
     def __init__(self):
-        self.leftEncoder = Encoder()
-        self.rightEncoder = Encoder()
         self.pose = Pose()
         self.lastTime = 0
+        self.leftTrackSpeed = 0
+        self.rightTrackSpeed = 0
 
-    def setWheelSeparation(self, separation):
-        self.wheelSeparation = separation
+    def setTrackSeparation(self, separation):
+        self.trackSeparation = separation
 
-    def setTicksPerMeter(self, ticks):
-        self.ticksPerMeter = ticks
+    def setTrackLength(self, length):
+        self.trackLength = length
 
-    def setEncoderRange(self, low, high):
-        self.leftEncoder.setRange(low, high)
-        self.rightEncoder.setRange(low, high)
+    def setSpeedUnitConversion(self, conv):
+        self.unitConversion = conv
 
     def setTime(self, newTime):
         self.lastTime = newTime
 
-    def updateLeftWheel(self, newCount):
-        self.leftEncoder.update(newCount)
+    def updateLeftWheel(self, newSpeed):
+        self.leftTrackSpeed = newSpeed
 
-    def updateRightWheel(self, newCount):
-        self.rightEncoder.update(newCount)
+    def updateRightWheel(self, newSpeed):
+        self.rightTrackSpeed = newSpeed
 
     def updatePose(self, newTime):
-        """Updates the pose based on the accumulated encoder ticks
-        of the two wheels. See https://chess.eecs.berkeley.edu/eecs149/documentation/differentialDrive.pdf
-        for details.
-        """
-        leftTravel = self.leftEncoder.getDelta() / self.ticksPerMeter
-        rightTravel = self.rightEncoder.getDelta() / self.ticksPerMeter
+
+        leftTravel = self.leftTrackSpeed * self.trackLength * self.unitConversion
+        rightTravel = self.rightTrackSpeed * self.trackLength * self.unitConversion
         deltaTime = newTime - self.lastTime
 
         deltaTravel = (rightTravel + leftTravel) / 2
-        deltaTheta = (rightTravel - leftTravel) / self.wheelSeparation
+        deltaTheta = (rightTravel - leftTravel) / self.trackSeparation
 
         if rightTravel == leftTravel:
             deltaX = leftTravel*cos(self.pose.theta)

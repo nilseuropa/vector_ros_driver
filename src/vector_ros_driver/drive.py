@@ -36,10 +36,6 @@ class Drive(object):
         self.async_robot.motors.set_wheel_motors(self.lwheel_speed_mm_sec, self.rwheel_speed_mm_sec)
 
     def publish_estimated_encoder_ticks(self):
-        ''' publishing encoder ticks is required in order to use diff_drive pkg '''
-
-        lwheel_ticks_total = 0
-        rwheel_ticks_total = 0
 
         while not rospy.is_shutdown():
             self.lwheel_ticks_publisher.publish(int(self.async_robot.left_wheel_speed_mmps))

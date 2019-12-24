@@ -26,25 +26,21 @@ class OdometryNode:
         self.nodeName = rospy.get_name()
         rospy.loginfo("{0} started".format(self.nodeName))
 
-        rospy.Subscriber("/vector/left_wheel_ticks", Int32, self.leftCallback)
-        rospy.Subscriber("/vector/right_wheel_ticks", Int32, self.rightCallback)
+        rospy.Subscriber("/vector/left_wheel_speed", Int32, self.leftCallback)
+        rospy.Subscriber("/vector/right_wheel_speed", Int32, self.rightCallback)
         rospy.Subscriber("/vector/initialpose", PoseWithCovarianceStamped,
                          self.on_initial_pose)
 
-        self.ticksPerMeter = 1000
-        self.wheelSeparation = 0.055
-        self.rate = 20.0
         self.baseFrameID = rospy.get_param('~base_frame_id', 'base_footprint')
         self.odomFrameID = rospy.get_param('~odom_frame_id', 'odom')
-        self.publishTF = rospy.get_param('~publish_tf', False)
-        self.encoderMin = -32768
-        self.encoderMax = 32767
+        self.publishTF = rospy.get_param('~publish_tf', True) # default False !
 
-        self.odometry.setWheelSeparation(self.wheelSeparation)
-        self.odometry.setTicksPerMeter(self.ticksPerMeter)
-        self.odometry.setEncoderRange(self.encoderMin, self.encoderMax)
+        self.odometry.setTrackSeparation(0.047)
+        self.odometry.setTrackLength(0.055)
+        self.odometry.setSpeedUnitConversion(0.001) # mm / sec -> m / sec
         self.odometry.setTime(rospy.get_time())
 
+        self.rate = 10.0
         rate = rospy.Rate(self.rate)
         while not rospy.is_shutdown():
             self.publish()
