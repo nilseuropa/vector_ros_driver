@@ -26,10 +26,6 @@ class Camera(object):
             pil_image = self.async_robot.camera.latest_image.raw_image.convert('RGB')
             cv_image = numpy.array(pil_image)
             cv_image = cv_image[:, :, ::-1].copy()
-
-            # cv2.imshow("Image window", cv_image)
-            # cv2.waitKey(3)
-
             try:
                 self.image_publisher.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
             except CvBridgeError as e:

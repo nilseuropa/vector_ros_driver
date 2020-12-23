@@ -1,10 +1,10 @@
 <launch>
 
-    <arg name="use_anki_description" default="false"/>
+    <arg name="use_anki_description" default="true"/> <!-- TEMP -->
 
     <arg name="model" default="$(find anki_description)/urdf/vector.xacro" if="$(arg use_anki_description)"/>
     <arg name="model" default="$(find vector_ros_driver)/urdf/vector.urdf.xacro" unless="$(arg use_anki_description)"/>
-    <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
 
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
         <param name="publish_frequency" value="10.0"/>

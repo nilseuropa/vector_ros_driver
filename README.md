@@ -11,7 +11,7 @@ In [nilseuropa/anki_description](https://github.com/nilseuropa/anki_description)
 ### SDK Setup
 
 Get the Vector SDK if you don't have it already with `python3 -m pip install --user anki_vector`.
-Run the `sdk_auto_config.sh` script to save the Anki SDK certification file to your disk.
+Run `python3 -m anki_vector.configure` script and follow instructions to save the Anki SDK certificate file to your disk.
 
 
 
@@ -41,6 +41,7 @@ sudo apt install python3-yaml python3-pip python3-dev python3-numpy python-catki
 ```
 
 `pip3 install` these:
+
 * opencv-python
 * rospkg
 * catkin_pkg
