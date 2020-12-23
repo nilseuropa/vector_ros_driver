@@ -4,7 +4,17 @@ In [nilseuropa/vector_description](https://github.com/nilseuropa/vector_descript
 
 ![](doc/rviz.png)
 
-## Setup
+## Prerequisites
+
+### SDK Setup
+
+Get the Vector SDK if you don't have it already with `python3 -m pip install --user anki_vector`.
+Run the `sdk_auto_config.sh` script to save the Anki SDK certification file to your disk.
+
+## ROS-Noetic Setup
+
+
+## ROS-Melodic Setup
 
 ### Install required dependencies
 
@@ -26,11 +36,6 @@ sudo apt install python3-yaml python3-pip python3-dev python3-numpy python-catki
 * rospkg
 * catkin_pkg
 
-**SDK Setup**
-
-Get the Vector SDK if you don't have it already with `python3 -m pip install --user anki_vector`.
-Run the `sdk_auto_config.sh` script to save the Anki SDK certification file to your disk. _( Make a backup of those files, as Anki cloud services might go down soon. )_
-
 ### Build **cv_bridge** for python 3.6
 ```bash
 mkdir rospy3_cv_bridge_ws
@@ -46,7 +51,7 @@ catkin build cv_bridge
 ```
 Best to add `source ~/rospy3_cv_bridge_ws/install/setup.bash --extend` to your `.bashrc`
 
-### Build this package
+## Vector ROS driver usage
 Clone this repository into your regular ROS catkin workspace and run `roslaunch vector_ros_driver driver.launch`
 
 _It shall produce this graph:_
