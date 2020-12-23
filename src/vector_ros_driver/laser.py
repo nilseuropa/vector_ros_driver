@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 
 import rospy
 import anki_vector
@@ -36,4 +36,3 @@ if __name__=="__main__":
     async_robot.connect()
     Imu(async_robot)
     rospy.spin()
-
